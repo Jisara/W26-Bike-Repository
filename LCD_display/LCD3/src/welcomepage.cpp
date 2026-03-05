@@ -74,11 +74,11 @@ void drawSplash() {
   gfx->print(contributorsText);
 
   const char* names[] = {
-    "Name 1",  "Name 2",
-    "Name 3",  "Name 4",
-    "Name 5",  "Name 6",
-    "Name 7",  "Name 8",
-    "Name 9",  "Name 10"
+    "Nathan",  "Jumaana",
+    "Jisara",  "Muhammad",
+    "Sophie",  "Eric",
+    "Franky",  "Calvin",
+    "Colleen",  "Galit"
   };
 
   gfx->setTextColor(C_WHITE);
