@@ -49,6 +49,12 @@ void animateBikeAcrossBottom(uint32_t durationMs, uint16_t frameDelayMs) {
       break;
     }
 
+    if (touchEarlyExit()) {
+  gfx->fillRect(2, laneTop, SCREEN_WIDTH - 4, laneHeight, C_BLACK);
+  gfx->flush();
+  drawSecretScreen();
+  return;
+}
     int bikeX = bikeStartX + static_cast<int>((static_cast<int64_t>(bikeEndX - bikeStartX) * elapsed) / durationMs);
 
     gfx->fillRect(2, laneTop, SCREEN_WIDTH - 4, laneHeight, C_BLACK);

@@ -14,4 +14,6 @@ void drawSecretScreen();
 void touchSetup();
 void touchHandleSwitch();
 
+bool touchEarlyExit();
+
 #endif

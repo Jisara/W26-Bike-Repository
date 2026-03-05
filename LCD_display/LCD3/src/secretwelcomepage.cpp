@@ -61,6 +61,16 @@ static void drawScreenBorder2(uint16_t color, int thickness = 2) {
   }
 }
 
+bool touchEarlyExit() {
+  if (digitalRead(TOUCH_IRQ) == HIGH) return false;
+  uint32_t now = millis();
+  if (now - lastTouchTime < TOUCH_DEBOUNCE_MS) return false;
+  lastTouchTime = now;
+  currentScreen = SCREEN_SECRET;
+  return true;
+}
+
+
 void drawSecretScreen() {
   gfx->fillScreen(C_BLACK);
   drawScreenBorder2(C_GREEN);
