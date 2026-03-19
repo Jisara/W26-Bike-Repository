@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PIO Build",
+      "type": "shell",
+      "command": "pio run",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "PIO Upload",
+      "type": "shell",
+      "command": "pio run -t upload",
+      "group": "build"
+    },
+    {
+      "label": "PIO Monitor",
+      "type": "shell",
+      "command": "pio device monitor"
+    }
+  ]
+}
