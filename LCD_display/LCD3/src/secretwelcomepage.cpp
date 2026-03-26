@@ -2,9 +2,7 @@
 #include "welcomepage.h"
 #include "secretscreen.h"
 
-//screen will have 2 phase - one is if the bike has
-
-
+//this screen is simply cooked
 
 // ── Touch SPI ──
 static SPIClass touchSPI(HSPI);

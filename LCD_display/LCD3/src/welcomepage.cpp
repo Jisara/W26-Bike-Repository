@@ -2,6 +2,12 @@
 #include "welcomepage.h"
 #include "welcomepageanim.h"
 #include "secretscreen.h"
+#include "stats.h"
+
+static const uint32_t WELCOME_DURATION_MS = 10000;
+enum AppScreen { APP_WELCOME, APP_STATS };
+static AppScreen appScreen = APP_WELCOME;
+static uint32_t appStartMs = 0;
 
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
   45, 47, 21, 48, 40, 39
@@ -109,21 +115,28 @@ void setup() {
   gfx->begin();
   pinMode(LCD_BL, OUTPUT);
   digitalWrite(LCD_BL, HIGH);
+  appStartMs = millis();
 
   touchSetup();
   drawSplash();
   Serial.println("Splash shown");
 
-  // TODO: drawDashboard() goes here next
-  Serial.println("Ready for dashboard");
+  Serial.println("Welcome running");
 }
 
 void loop() {
-  touchHandleSwitch(); 
-  
-  static uint32_t last = 0;
-    if (millis() - last >= 1000) {
-    last = millis();
-    Serial.printf("Uptime: %lu s\n", millis() / 1000);
+  uint32_t now = millis();
+
+  if (appScreen == APP_WELCOME) {
+    touchHandleSwitch();
+
+    if (now - appStartMs >= WELCOME_DURATION_MS) {
+      appScreen = APP_STATS;
+      statsInit();
+      Serial.println("-> Stats dashboard");
+    }
+    return;
   }
+
+  statsUpdateAndRender();
 }
