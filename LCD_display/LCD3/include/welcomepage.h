@@ -16,16 +16,24 @@
 #define C_GRAY    0x8410
 #define C_YELLOW  0xFFE0
 #define C_RED     0xF800
+#define C_CYAN    0x07FF
 
 // ── Global Graphics Objects (defined in main.cpp) ──
 extern Arduino_DataBus  *bus;
 extern Arduino_GFX      *panel;
-extern Arduino_Canvas   *gfx;
+extern Arduino_GFX      *gfx;
 
 // ── Utility Functions ──
 int textWidth(const char *text, int textSize);
 
+// ── Button Regions (for touch detection) ──
+#define GPS_BUTTON_X 220
+#define GPS_BUTTON_Y 10
+#define GPS_BUTTON_W 50
+#define GPS_BUTTON_H 30
+
 // ── Main Functions ──
 void drawSplash();
+void drawGpsButton();  // Draw GPS button on splash screen
 
 #endif

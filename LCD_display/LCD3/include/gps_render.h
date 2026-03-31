@@ -1,0 +1,10 @@
+#ifndef GPS_RENDER_H
+#define GPS_RENDER_H
+
+#include <stdint.h>
+
+// Draws the navigation dashboard screen from phone-provided Maps text.
+// secondsSinceUpdate is used to show how fresh the instruction is.
+void drawGpsScreen(const char *navText, uint32_t secondsSinceUpdate, bool bleConnected);
+
+#endif

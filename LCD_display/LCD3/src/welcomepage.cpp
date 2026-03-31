@@ -11,7 +11,7 @@ Arduino_GFX *panel = new Arduino_NV3041A(
   bus, GFX_NOT_DEFINED, 1, true
 );
 
-Arduino_Canvas *gfx = new Arduino_Canvas(SCREEN_WIDTH, SCREEN_HEIGHT, panel);
+Arduino_GFX *gfx = panel;
 
 // ── Text & Layout Functions ──
 
@@ -97,8 +97,31 @@ void drawSplash() {
     gfx->print(names[i]);
   }
 
+  drawGpsButton();
   gfx->flush();
   if (!animateBikeAcrossBottom()) {
   animateBikeToW26FromRight(modelText, modelTextY, 2200, 25);
 }
+}
+
+void drawGpsButton() {
+  // Draw GPS button in top-right corner
+  const int btn_x = GPS_BUTTON_X;
+  const int btn_y = GPS_BUTTON_Y;
+  const int btn_w = GPS_BUTTON_W;
+  const int btn_h = GPS_BUTTON_H;
+  
+  // Button background
+  gfx->fillRoundRect(btn_x, btn_y, btn_w, btn_h, 4, C_CYAN);
+  
+  // Button border
+  gfx->drawRoundRect(btn_x, btn_y, btn_w, btn_h, 4, C_WHITE);
+  
+  // Button text
+  const char *label = "GPS";
+  gfx->setTextColor(C_BLACK);
+  gfx->setTextSize(2);
+  const int text_w = textWidth(label, 2);
+  gfx->setCursor(btn_x + (btn_w - text_w) / 2, btn_y + 8);
+  gfx->print(label);
 }

@@ -2,9 +2,7 @@
 #include "welcomepage.h"
 #include "secretscreen.h"
 
-//screen will have 2 phase - one is if the bike has
-
-
+// Screen states: SPLASH (welcome), SECRET (brainrot), GPS (map visualization)
 
 // ── Touch SPI ──
 static SPIClass touchSPI(HSPI);
@@ -14,8 +12,7 @@ static uint8_t secretAnimFrame = 0;
 static const uint16_t SECRET_ANIM_INTERVAL_MS = 120;
 
 // ── Screen state ──
-enum Screen { SCREEN_SPLASH, SCREEN_SECRET };
-static Screen currentScreen = SCREEN_SPLASH;
+static ScreenType currentScreen = SCREEN_SPLASH;
 
 // ── Raw XPT2046 read ──
 static uint16_t xpt2046Read(uint8_t cmd) {
@@ -30,6 +27,23 @@ static uint16_t xpt2046Read(uint8_t cmd) {
 static bool isTouched() {
   if (digitalRead(TOUCH_IRQ) == HIGH) return false;
   return xpt2046Read(0xB0) > 200;
+}
+
+// Get calibrated touch coordinates (272x480 display)
+// Returns raw coordinates from XPT2046
+bool getTouchCoordinates(uint16_t &x, uint16_t &y) {
+  if (digitalRead(TOUCH_IRQ) == HIGH) return false;
+  
+  // XPT2046 commands for X and Y axis readings
+  uint16_t raw_x = xpt2046Read(0xD0);  // Y-coordinate (will be swapped)
+  uint16_t raw_y = xpt2046Read(0x90);  // X-coordinate (will be swapped)
+  
+  // Simple calibration mapping (adjust based on your screen)
+  // Assuming 4096 raw points map to display resolution
+  x = (raw_y * 272) / 4096;
+  y = (raw_x * 480) / 4096;
+  
+  return true;
 }
 
 // ── Call once from setup() ──
@@ -56,16 +70,42 @@ void touchHandleSwitch() {
   if (now - lastTouchTime < TOUCH_DEBOUNCE_MS) return;
   lastTouchTime = now;
 
+  // Get touch coordinates
+  uint16_t touch_x, touch_y;
+  if (!getTouchCoordinates(touch_x, touch_y)) {
+    return;
+  }
+
+  Serial.printf("Touch: x=%u, y=%u, screen=%d\n", touch_x, touch_y, (int)currentScreen);
+
+  // Check if GPS button was pressed (only on splash screen)
   if (currentScreen == SCREEN_SPLASH) {
-    currentScreen = SCREEN_SECRET;
-    secretAnimFrame = 0;
-    lastSecretAnimTime = now;
-    drawSecretScreen();
-    Serial.println("-> Secret Screen");
-  } else {
-    currentScreen = SCREEN_SPLASH;
-    drawSplash();
-    Serial.println("-> Splash");
+    if (touch_x >= GPS_BUTTON_X && touch_x <= GPS_BUTTON_X + GPS_BUTTON_W &&
+        touch_y >= GPS_BUTTON_Y && touch_y <= GPS_BUTTON_Y + GPS_BUTTON_H) {
+      currentScreen = SCREEN_GPS;
+      Serial.println("-> GPS Screen");
+      return;
+    }
+  }
+
+  // Otherwise, cycle through screens
+  switch (currentScreen) {
+    case SCREEN_SPLASH:
+      currentScreen = SCREEN_SECRET;
+      secretAnimFrame = 0;
+      lastSecretAnimTime = now;
+      drawSecretScreen();
+      Serial.println("-> Secret Screen");
+      break;
+    case SCREEN_SECRET:
+      currentScreen = SCREEN_GPS;
+      Serial.println("-> GPS Screen");
+      break;
+    case SCREEN_GPS:
+      currentScreen = SCREEN_SPLASH;
+      drawSplash();
+      Serial.println("-> Splash");
+      break;
   }
 }
 
@@ -86,8 +126,8 @@ static void drawTagPill(int x, int y, const char *text, uint16_t bg, uint16_t fg
 }
 
 static void drawBrainrotOverlay(uint8_t frame) {
-  const uint16_t C_BLUE = 0x001F;
-  const uint16_t C_CYAN = 0x07FF;
+  const uint16_t C_BLUE_LOCAL = 0x001F;
+  const uint16_t C_CYAN_LOCAL = 0x07FF;
   const uint16_t C_PINK = 0xFBB7;
 
   const char *leftTags[] = {"NO CAP", "FR FR", "W RIZZ", "AURA++"};
@@ -98,7 +138,7 @@ static void drawBrainrotOverlay(uint8_t frame) {
   const int tickerIdx = (frame / 8) % 4;
 
   drawTagPill(12, 14, leftTags[tagIdx], C_RED, C_WHITE);
-  drawTagPill(SCREEN_WIDTH - 12 - (textWidth(rightTags[tagIdx], 1) + 8), 14, rightTags[tagIdx], C_BLUE, C_WHITE);
+  drawTagPill(SCREEN_WIDTH - 12 - (textWidth(rightTags[tagIdx], 1) + 8), 14, rightTags[tagIdx], C_BLUE_LOCAL, C_WHITE);
 
   const char *level = "BRAINROT LEVEL: MAX";
   gfx->setTextColor(C_PINK);
@@ -106,7 +146,7 @@ static void drawBrainrotOverlay(uint8_t frame) {
   gfx->setCursor((SCREEN_WIDTH - textWidth(level, 1)) / 2, 38);
   gfx->print(level);
 
-  gfx->setTextColor(C_CYAN);
+  gfx->setTextColor(C_CYAN_LOCAL);
   gfx->setTextSize(1);
   gfx->setCursor((SCREEN_WIDTH - textWidth(ticker[tickerIdx], 1)) / 2, SCREEN_HEIGHT / 2 + 46);
   gfx->print(ticker[tickerIdx]);
@@ -224,4 +264,8 @@ void drawSecretScreen() {
   gfx->print(hint);
 
   gfx->flush();
+}
+
+ScreenType getCurrentScreen() {
+  return currentScreen;
 }
