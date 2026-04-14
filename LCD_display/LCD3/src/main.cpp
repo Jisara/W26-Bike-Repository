@@ -1,4 +1,4 @@
-#include <cstring>
+#include <string.h>
 #include "welcomepage.h"
 #include "welcomepageanim.h"
 #include "secretscreen.h"
