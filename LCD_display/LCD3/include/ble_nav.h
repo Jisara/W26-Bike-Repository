@@ -2,6 +2,8 @@
 #define BLE_NAV_H
 
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 // Initialize BLE with a Nordic UART Service (NUS)-style GATT service.
 // The phone writes navigation text to the RX characteristic.
@@ -21,5 +23,14 @@ bool bleNavIsConnected();
 
 // Returns true once when connection state changes, then auto-clears.
 bool bleNavConnectionChanged();
+
+// Monotonic counter incremented on every non-empty RX write.
+uint32_t bleNavGetRxSequence();
+
+// Length of last non-empty RX payload.
+size_t bleNavGetLastRxLength();
+
+// Prints the last received BLE RX payload in human-readable + hex form.
+void bleNavDebugPrintLastRx();
 
 #endif
