@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Electrium Nav Bridge</string>
+    <string name="notification_service_label">Electrium Maps Listener</string>
+</resources>
