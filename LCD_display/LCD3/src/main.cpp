@@ -1,6 +1,7 @@
-#include "secretscreen.h"
+#include <cstring>
 #include "welcomepage.h"
 #include "welcomepageanim.h"
+#include "secretscreen.h"
 #include "ble_nav.h"
 #include "gps_render.h"
 
@@ -16,6 +17,7 @@ void setup() {
   gfx->begin();
   pinMode(LCD_BL, OUTPUT);
   digitalWrite(LCD_BL, HIGH);
+  appStartMs = millis();
 
   touchSetup();
   drawSplash();

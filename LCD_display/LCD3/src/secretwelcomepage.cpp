@@ -2,7 +2,7 @@
 #include "welcomepage.h"
 #include "secretscreen.h"
 
-// Screen states: SPLASH (welcome), SECRET (brainrot), GPS (map visualization)
+//this screen is simply cooked
 
 // ── Touch SPI ──
 static SPIClass touchSPI(HSPI);

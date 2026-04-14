@@ -4,6 +4,14 @@
 
 // ── Bike Drawing & Animation ──
 
+static void clearBikeLane(int laneTop, int laneHeight) {
+  gfx->fillRect(0, laneTop, SCREEN_WIDTH, laneHeight, C_BLACK);
+  gfx->drawFastVLine(0, laneTop, laneHeight, C_GREEN);
+  gfx->drawFastVLine(1, laneTop, laneHeight, C_GREEN);
+  gfx->drawFastVLine(SCREEN_WIDTH - 2, laneTop, laneHeight, C_GREEN);
+  gfx->drawFastVLine(SCREEN_WIDTH - 1, laneTop, laneHeight, C_GREEN);
+}
+
 void drawBike(int x, int y, uint16_t color, int scale) {
   const int wheelRadius = 6 * scale;
   const int rearWheelX = x;
@@ -57,7 +65,7 @@ bool animateBikeAcrossBottom(uint32_t durationMs, uint16_t frameDelayMs) {
 }
     int bikeX = bikeStartX + static_cast<int>((static_cast<int64_t>(bikeEndX - bikeStartX) * elapsed) / durationMs);
 
-    gfx->fillRect(2, laneTop, SCREEN_WIDTH - 4, laneHeight, C_BLACK);
+    clearBikeLane(laneTop, laneHeight);
     
     gfx->setTextColor(C_YELLOW);
     gfx->setTextSize(taglineSize);
@@ -70,7 +78,7 @@ bool animateBikeAcrossBottom(uint32_t durationMs, uint16_t frameDelayMs) {
     delay(frameDelayMs);
   }
 
-  gfx->fillRect(2, laneTop, SCREEN_WIDTH - 4, laneHeight, C_BLACK);
+  clearBikeLane(laneTop, laneHeight);
   gfx->flush();
   return false;  // completed normally
 }
@@ -103,7 +111,7 @@ void animateBikeToW26FromRight(const char *modelText, int modelTextY, uint32_t d
     int textX = textStartX - static_cast<int>((static_cast<int64_t>(textStartX - textFinalX) * elapsed) / durationMs);
     int bikeX = bikeStartX - static_cast<int>((static_cast<int64_t>(bikeStartX - bikeFinalX) * elapsed) / durationMs);
 
-    gfx->fillRect(2, laneTop, SCREEN_WIDTH - 4, laneHeight, C_BLACK);
+    clearBikeLane(laneTop, laneHeight);
 
     gfx->setTextColor(C_YELLOW);
     gfx->setTextSize(textSize);
@@ -116,7 +124,7 @@ void animateBikeToW26FromRight(const char *modelText, int modelTextY, uint32_t d
     delay(frameDelayMs);
   }
 
-  gfx->fillRect(2, laneTop, SCREEN_WIDTH - 4, laneHeight, C_BLACK);
+  clearBikeLane(laneTop, laneHeight);
   gfx->setTextColor(C_YELLOW);
   gfx->setTextSize(textSize);
   gfx->setCursor(textFinalX, modelTextY);
