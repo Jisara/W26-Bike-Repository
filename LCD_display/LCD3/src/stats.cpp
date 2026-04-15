@@ -1,6 +1,22 @@
-// code for stats dashboard page
+/*******************************************************************************************************************************
+ * @file   stats.cpp
+ *
+ * @brief  Source file for the stats screen module
+ *
+ * @date   2026-04-__
+ * @author  _________
+ *******************************************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+
+/* Intra-component Headers */
 #include "stats.h"
+
+/*******************************************************************************************************************************
+ * Private Variables
+ *******************************************************************************************************************************/
 
 // ---------- Demo “stats” (frontend data model) ----------
 struct Stats {
@@ -42,6 +58,10 @@ struct DisplaySnapshot {
 static bool s_statsBaseDrawn = false;
 static DisplaySnapshot s_lastDrawn = {};
 static bool s_haveLastDrawn = false;
+
+/*******************************************************************************************************************************
+ * Function Definitions
+ *******************************************************************************************************************************/
 
 static inline float clampf(float x, float a, float b) { return x < a ? a : (x > b ? b : x); }
 
@@ -112,7 +132,7 @@ void drawIndicatorArrow(bool on, bool left, int y) {
   if (left) {
     gfx->fillTriangle(10, y, 38, y - 12, 38, y + 12, C_YELLOW);
   } else {
-    gfx->fillTriangle(W - 10, y, W - 38, y - 12, W - 38, y + 12, C_YELLOW);
+    gfx->fillTriangle(SCREEN_WIDTH - 10, y, SCREEN_WIDTH - 38, y - 12, SCREEN_WIDTH - 38, y + 12, C_YELLOW);
   }
 }
 
@@ -181,8 +201,8 @@ static void drawDashboard() {
   gfx->setCursor(10, 430);
 
   // ----- Bottom indicators -----
-  drawIndicatorArrow(s.leftSignal, true, H - 34);
-  drawIndicatorArrow(s.rightSignal, false, H - 34);
+  drawIndicatorArrow(s.leftSignal, true, SCREEN_HEIGHT - 34);
+  drawIndicatorArrow(s.rightSignal, false, SCREEN_HEIGHT - 34);
 
   gfx->flush();
 }
@@ -249,12 +269,12 @@ static void drawDashboardDynamic() {
   gfx->printf("Motor: %.1f C", s.motorTempC);
 
   // Bottom blinking light indicators
-  const int indicatorY = H - 34;
+  const int indicatorY = SCREEN_HEIGHT - 34;
   const int indicatorClearY = indicatorY - 14;
   const int indicatorClearH = 32;
-  gfx->fillRect(2, indicatorClearY, W - 4, indicatorClearH, C_BLACK);
-  drawIndicatorArrow(s.leftSignal, true, H - 34);
-  drawIndicatorArrow(s.rightSignal, false, H - 34);
+  gfx->fillRect(2, indicatorClearY, SCREEN_WIDTH - 4, indicatorClearH, C_BLACK);
+  drawIndicatorArrow(s.leftSignal, true, SCREEN_HEIGHT - 34);
+  drawIndicatorArrow(s.rightSignal, false, SCREEN_HEIGHT - 34);
 
   gfx->flush();
 }

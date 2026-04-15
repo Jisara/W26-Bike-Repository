@@ -1,17 +1,37 @@
 #pragma once
 
+/*******************************************************************************************************************************
+ * @file   bleNav.h
+ *
+ * @brief  Header file for the BLE navigation module
+ *
+ * @date   2026-04-DD
+ * @author _____
+ *******************************************************************************************************************************/
+
+/* Standard library Headers */
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <ctype.h>
+#include <cstring>
+
+/* Inter-component Headers */
 #include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
-#include <ctype.h>
-#include <cstring>
 
-/* --- STATIC VARIABLES -- */
+/* Intra-component Headers */
+
+/*******************************************************************************************************************************
+ * Private defines and enums
+ *******************************************************************************************************************************/
+
+/*******************************************************************************************************************************
+ * Variables
+ *******************************************************************************************************************************/
 
 // Nordic UART Service (NUS) UUIDs.
 static const char *kNusServiceUuid = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
@@ -37,7 +57,9 @@ static volatile size_t g_lastRxLen = 0;
 static std::string g_lastPolledValue;
 static uint32_t g_lastPollMs = 0;
 
-/* --- ----- ---------- -- */
+/*******************************************************************************************************************************
+ * Function declarations
+ *******************************************************************************************************************************/
 
 // Initialize BLE with a Nordic UART Service (NUS)-style GATT service.
 // The phone writes navigation text to the RX characteristic.
@@ -66,3 +88,5 @@ size_t bleNavGetLastRxLength();
 
 // Prints the last received BLE RX payload in human-readable + hex form.
 void bleNavDebugPrintLastRx();
+
+/** @} */

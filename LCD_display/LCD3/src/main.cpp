@@ -1,3 +1,15 @@
+/*******************************************************************************************************************************
+ * @file   main.cpp
+ *
+ * @brief  Source file for the main module
+ *
+ * @date   2026-04-15
+ * @author _______
+ *******************************************************************************************************************************/
+
+/* Standard library Headers */
+
+/* Inter-component Headers */
 #include "welcomePage.h"
 #include "welcomePageAnim.h"
 #include "secretScreen.h"
@@ -8,11 +20,21 @@
 #include "VESC.h"
 #include "hardware.h"
 
+/* Intra-component Headers */
+
+/*******************************************************************************************************************************
+ * Private Variables
+ *******************************************************************************************************************************/
+
 // Default nav payload for GPS dashboard until phone/BLE data is wired in.
 static String g_mapsDirectionText = "Waiting for Maps notification...";
 static uint32_t g_lastNavUpdateMs = 0;
 static uint32_t g_lastScreenTouchMs = 0;
 static uint32_t g_lastGpsDrawMs = 0;
+
+/*******************************************************************************************************************************
+ * Function Definitions
+ *******************************************************************************************************************************/
 
 static bool didTouch(uint32_t nowMs) {
   if (digitalRead(TOUCH_IRQ) == HIGH) {

@@ -1,24 +1,25 @@
 #pragma once
 
 /*******************************************************************************************************************************
- * @file   gpsRender.h
+ * @file   ______.h
  *
- * @brief  Header file for the gpd rendering module
+ * @brief  Header file for the ____ module
  *
  * @date   2026-04-DD
  * @author _____
  *******************************************************************************************************************************/
 
 /* Standard library Headers */
-#include <stdint.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
 
 /* Inter-component Headers */
-#include "welcomePage.h"
 
 /* Intra-component Headers */
+
+/**
+ * @defgroup <ModuleGroup> <Module Group Name>
+ * @brief    <Short description of the module>
+ * @{
+ */
 
 /*******************************************************************************************************************************
  * Private defines and enums
@@ -31,17 +32,5 @@
 /*******************************************************************************************************************************
  * Function declarations
  *******************************************************************************************************************************/
-
-// Draws the navigation dashboard screen from phone-provided Maps text.
-// secondsSinceUpdate is used to show how fresh the instruction is.
-void drawGpsScreen(
-    const char *navText,
-    uint32_t secondsSinceUpdate,
-    bool bleConnected,
-    uint32_t rxSequence,
-    uint32_t lastRxLength);
-
-// True when the turn-instruction area should use circular horizontal scrolling (LVGL-style).
-bool gpsNavInstructionWantsMarquee(const char *text);
 
 /** @} */
