@@ -1,9 +1,4 @@
-#include "gps_render.h"
-#include "welcomepage.h"
-
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
+#include "gpsRender.h"
 
 struct NavDashboardData {
   char speed[24];

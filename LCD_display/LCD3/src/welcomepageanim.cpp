@@ -1,6 +1,4 @@
-#include "welcomepage.h"
-#include "welcomepageanim.h"
-#include "secretscreen.h"
+#include "welcomePageAnim.h"
 
 // ── Bike Drawing & Animation ──
 

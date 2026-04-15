@@ -1,8 +1,4 @@
-#include <cstring>
-#include "welcomepage.h"
-#include "welcomepageanim.h"
-#include "secretscreen.h"
-#include "stats.h"
+#include "welcomePage.h"
 
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
   45, 47, 21, 48, 40, 39

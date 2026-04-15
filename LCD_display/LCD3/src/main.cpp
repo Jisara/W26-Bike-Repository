@@ -1,9 +1,12 @@
-#include <cstring>
-#include "welcomepage.h"
-#include "welcomepageanim.h"
-#include "secretscreen.h"
-#include "gps_render.h"
+#include "welcomePage.h"
+#include "welcomePageAnim.h"
+#include "secretScreen.h"
+#include "bleNav.h"
+#include "gpsRender.h"
 #include "stats.h"
+#include "touch.h"
+#include "VESC.h"
+#include "hardware.h"
 
 // Default nav payload for GPS dashboard until phone/BLE data is wired in.
 static String g_mapsDirectionText = "Waiting for Maps notification...";
@@ -34,8 +37,8 @@ void setup() {
   Serial.begin(115200);
 
   gfx->begin();
-  pinMode(LCD_BL, OUTPUT);
-  digitalWrite(LCD_BL, HIGH);
+  pinMode(BL_PIN, OUTPUT);
+  digitalWrite(BL_PIN, HIGH);
   appStartMs = millis();
 
   touchSetup();

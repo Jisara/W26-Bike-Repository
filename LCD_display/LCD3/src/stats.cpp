@@ -1,11 +1,6 @@
 // code for stats dashboard page
-#include "welcomepage.h"
-#include "stats.h"
-#include <math.h>
 
-// Canvas dimensions
-static const int W = SCREEN_WIDTH;
-static const int H = SCREEN_HEIGHT;
+#include "stats.h"
 
 // ---------- Demo “stats” (frontend data model) ----------
 struct Stats {
@@ -28,8 +23,6 @@ struct Stats {
   uint32_t tripStartMs = 0;
 } s;
 
-static bool s_statsBaseDrawn = false;
-
 struct DisplaySnapshot {
   float speedKmh;
   int gear;
@@ -46,6 +39,7 @@ struct DisplaySnapshot {
   int mm;
 };
 
+static bool s_statsBaseDrawn = false;
 static DisplaySnapshot s_lastDrawn = {};
 static bool s_haveLastDrawn = false;
 

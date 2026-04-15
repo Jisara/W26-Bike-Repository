@@ -1,12 +1,10 @@
-#ifndef VESC_H
-#define VESC_H
+#pragma once
 
 #include <Arduino.h>
 #include <VescUart.h>
+#include <hardware.h>
 
 extern VescUart UART;
 
-void vescInit(HardwareSerial &serialPort = Serial1, int rxPin = 17, int txPin = 18);
+void vescInit(HardwareSerial &serialPort, int rxPin, int txPin);
 bool vescUpdate();
-
-#endif

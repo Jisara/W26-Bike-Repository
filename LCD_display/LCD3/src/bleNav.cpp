@@ -1,36 +1,4 @@
-#include "ble_nav.h"
-
-#include <Arduino.h>
-#include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
-#include <BLE2902.h>
-#include <ctype.h>
-#include <cstring>
-
-// Nordic UART Service (NUS) UUIDs.
-static const char *kNusServiceUuid = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
-static const char *kNusTxUuid      = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"; // Notify
-static const char *kNusRxUuid      = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"; // Write
-
-static BLECharacteristic *g_txChar = nullptr;
-static BLECharacteristic *g_rxChar = nullptr;
-static BLEServer *g_server = nullptr;
-
-// Staging + committed copy: onWrite only touches staging under a lock; loop() commits
-// to g_navText so we never read/write the same buffer from BLE stack and main task.
-static constexpr size_t kMaxNavText = 180;
-static char g_navText[kMaxNavText + 1] = {0};
-static char g_rxStaging[kMaxNavText + 1] = {0};
-static volatile bool g_stagingDirty = false;
-static volatile bool g_navUpdated = false;
-static portMUX_TYPE g_navMux = portMUX_INITIALIZER_UNLOCKED;
-static volatile bool g_bleConnected = false;
-static volatile bool g_connChanged = false;
-static volatile uint32_t g_rxSeq = 0;
-static volatile size_t g_lastRxLen = 0;
-static std::string g_lastPolledValue;
-static uint32_t g_lastPollMs = 0;
+#include "bleNav.h"
 
 static void logRxPayload(const char *source, const uint8_t *data, size_t len) {
   Serial.printf("NAV RX [%s] len=%u", source, static_cast<unsigned>(len));

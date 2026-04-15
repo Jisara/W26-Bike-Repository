@@ -1,7 +1,11 @@
-#ifndef GPS_RENDER_H
-#define GPS_RENDER_H
+#pragma once
+
+#include "welcomePage.h"
 
 #include <stdint.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
 
 // Draws the navigation dashboard screen from phone-provided Maps text.
 // secondsSinceUpdate is used to show how fresh the instruction is.
@@ -14,5 +18,3 @@ void drawGpsScreen(
 
 // True when the turn-instruction area should use circular horizontal scrolling (LVGL-style).
 bool gpsNavInstructionWantsMarquee(const char *text);
-
-#endif

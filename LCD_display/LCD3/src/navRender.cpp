@@ -1,23 +1,4 @@
-#include "nav_render.h"
-
-#include <Arduino.h>
-#include <cctype>
-#include <cstring>
-
-#include "welcomepage.h"
-
-// Bottom-half card layout on a 272x480 portrait display.
-static constexpr int kMargin = 10;
-static constexpr int kCardPad = 10;
-static constexpr int kLineGap = 4;
-static constexpr size_t kMaxNavChars = 180;
-
-enum class TurnKind {
-  kStraight,
-  kLeft,
-  kRight,
-  kUTurn
-};
+#include "navRender.h"
 
 static void drawSegment(const char *start, int length, int x, int y) {
   char buf[96];
