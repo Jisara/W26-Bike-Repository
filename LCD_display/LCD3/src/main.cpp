@@ -15,6 +15,7 @@ static bool didTouch(uint32_t nowMs) {
   if (digitalRead(TOUCH_IRQ) == HIGH) {
     return false;
   }
+
   if (nowMs - g_lastScreenTouchMs < TOUCH_DEBOUNCE_MS) {
     return false;
   }

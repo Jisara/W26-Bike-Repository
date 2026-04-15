@@ -18,7 +18,6 @@ enum ScreenType { SCREEN_SPLASH = 0, SCREEN_SECRET = 1, SCREEN_GPS = 2 };
 void drawSecretScreen();
 void touchSetup();
 void touchHandleSwitch();
-
 bool touchEarlyExit();
 
 // Touch coordinate reading

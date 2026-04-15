@@ -10,6 +10,7 @@ static uint32_t lastTouchTime = 0;
 static uint32_t lastSecretAnimTime = 0;
 static uint8_t secretAnimFrame = 0;
 static const uint16_t SECRET_ANIM_INTERVAL_MS = 120;
+static bool secretStaticDrawn = false;
 
 // ── Screen state ──
 static ScreenType currentScreen = SCREEN_SPLASH;
@@ -84,6 +85,7 @@ void touchHandleSwitch() {
       currentScreen = SCREEN_SECRET;
       secretAnimFrame = 0;
       lastSecretAnimTime = now;
+      secretStaticDrawn = false;
       drawSecretScreen();
       Serial.println("-> Secret Screen");
       break;
@@ -209,20 +211,9 @@ static void drawNyanCatMeme(int x, int y, uint8_t frame) {
   }
 }
 
-bool touchEarlyExit() {
-  if (digitalRead(TOUCH_IRQ) == HIGH) return false;
-  uint32_t now = millis();
-  if (now - lastTouchTime < TOUCH_DEBOUNCE_MS) return false;
-  lastTouchTime = now;
-  currentScreen = SCREEN_SECRET;
-  return true;
-}
-
-
-void drawSecretScreen() {
+static void drawSecretStatic() {
   gfx->fillScreen(C_BLACK);
   drawScreenBorder2(C_GREEN);
-  drawBrainrotOverlay(secretAnimFrame);
 
   const char *titleTop = "SECRET";
   const char *titleBottom = "CODE";
@@ -245,13 +236,40 @@ void drawSecretScreen() {
   gfx->setCursor((SCREEN_WIDTH - textWidth(meme, 2)) / 2, SCREEN_HEIGHT / 2 + 72);
   gfx->print(meme);
 
-  drawNyanCatMeme((SCREEN_WIDTH / 2) - 32, SCREEN_HEIGHT / 2 + 105, secretAnimFrame);
-
   const char *hint = "Touch to go back";
   gfx->setTextColor(C_GRAY);
   gfx->setTextSize(1);
   gfx->setCursor((SCREEN_WIDTH - textWidth(hint, 1)) / 2, SCREEN_HEIGHT - 14);
   gfx->print(hint);
+}
+
+static void drawSecretAnimated(uint8_t frame) {
+  // overlay text/badges area
+  gfx->fillRect(8, 8, SCREEN_WIDTH - 16, 56, C_BLACK);
+  // nyan animation area
+  gfx->fillRect((SCREEN_WIDTH / 2) - 110, SCREEN_HEIGHT / 2 + 80, 220, 104, C_BLACK);
+
+  drawBrainrotOverlay(frame);
+  drawNyanCatMeme((SCREEN_WIDTH / 2) - 32, SCREEN_HEIGHT / 2 + 105, frame);
+}
+
+bool touchEarlyExit() {
+  if (digitalRead(TOUCH_IRQ) == HIGH) return false;
+  uint32_t now = millis();
+  if (now - lastTouchTime < TOUCH_DEBOUNCE_MS) return false;
+  lastTouchTime = now;
+  currentScreen = SCREEN_SECRET;
+  return true;
+}
+
+
+void drawSecretScreen() {
+  if (!secretStaticDrawn) {
+    drawSecretStatic();
+    secretStaticDrawn = true;
+  }
+
+  drawSecretAnimated(secretAnimFrame);
 
   gfx->flush();
 }
