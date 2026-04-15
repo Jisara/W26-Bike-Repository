@@ -78,16 +78,6 @@ void touchHandleSwitch() {
 
   Serial.printf("Touch: x=%u, y=%u, screen=%d\n", touch_x, touch_y, (int)currentScreen);
 
-  // Check if GPS button was pressed (only on splash screen)
-  if (currentScreen == SCREEN_SPLASH) {
-    if (touch_x >= GPS_BUTTON_X && touch_x <= GPS_BUTTON_X + GPS_BUTTON_W &&
-        touch_y >= GPS_BUTTON_Y && touch_y <= GPS_BUTTON_Y + GPS_BUTTON_H) {
-      currentScreen = SCREEN_GPS;
-      Serial.println("-> GPS Screen");
-      return;
-    }
-  }
-
   // Otherwise, cycle through screens
   switch (currentScreen) {
     case SCREEN_SPLASH:

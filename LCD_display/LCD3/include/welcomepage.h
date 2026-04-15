@@ -34,7 +34,6 @@ int textWidth(const char *text, int textSize);
 
 // ── Main Functions ──
 void drawSplash();
-void drawGpsButton();  // Draw GPS button on splash screen
 
 static const uint32_t WELCOME_DURATION_MS = 10000;
 enum AppScreen { APP_WELCOME, APP_STATS, APP_GPS };

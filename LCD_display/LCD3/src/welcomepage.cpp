@@ -64,7 +64,6 @@ void drawSplash() {
   const char *contributorsText = "Contributors";
   const int contributorsSize = 2;
   const int contributorsY = 175;
-  const int contributorsTextHeight = 8 * contributorsSize;
   const int borderTopY = contributorsY - 10;
   const int namesStartY = 200;
   const int namesEndY = namesStartY + (4 * 30) + (8 * 2);  // 5 rows, last row + text height
@@ -77,12 +76,12 @@ void drawSplash() {
   gfx->setCursor((SCREEN_WIDTH - textWidth(contributorsText, contributorsSize)) / 2, contributorsY);
   gfx->print(contributorsText);
 
-  const char* names[] = {
+  const char *names[] = {
     "Nathan",  "Jumaana",
     "Jisara",  "Muhammad",
     "Sophie",  "Eric",
     "Franky",  "Calvin",
-    "Colleen",  "Galit"
+    "Colleen", "Galit"
   };
 
   gfx->setTextColor(C_WHITE);
@@ -90,39 +89,16 @@ void drawSplash() {
 
   for (int i = 0; i < 10; i++) {
     int col = i % 2;          // 0 = left, 1 = right
-    int row = i / 2;          // 0–4
+    int row = i / 2;          // 0-4
     int nameWidth = textWidth(names[i], 2);
     int x = (col * halfWidth) + ((halfWidth - nameWidth) / 2);
-    int y   = 200 + row * 30;
+    int y = 200 + row * 30;
     gfx->setCursor(x, y);
     gfx->print(names[i]);
   }
 
-  drawGpsButton();
   gfx->flush();
-  if (!animateBikeAcrossBottom()) {
-  animateBikeToW26FromRight(modelText, modelTextY, 2200, 25);
-}
-}
-
-void drawGpsButton() {
-  // Draw GPS button in top-right corner
-  const int btn_x = GPS_BUTTON_X;
-  const int btn_y = GPS_BUTTON_Y;
-  const int btn_w = GPS_BUTTON_W;
-  const int btn_h = GPS_BUTTON_H;
-  
-  // Button background
-  gfx->fillRoundRect(btn_x, btn_y, btn_w, btn_h, 4, C_CYAN);
-  
-  // Button border
-  gfx->drawRoundRect(btn_x, btn_y, btn_w, btn_h, 4, C_WHITE);
-  
-  // Button text
-  const char *label = "GPS";
-  gfx->setTextColor(C_BLACK);
-  gfx->setTextSize(2);
-  const int text_w = textWidth(label, 2);
-  gfx->setCursor(btn_x + (btn_w - text_w) / 2, btn_y + 8);
-  gfx->print(label);
+  if (!animateBikeAcrossBottom(6000, 16)) {
+    animateBikeToW26FromRight(modelText, modelTextY, 2200, 16);
+  }
 }
