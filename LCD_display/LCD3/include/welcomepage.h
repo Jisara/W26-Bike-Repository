@@ -37,7 +37,7 @@ void drawSplash();
 void drawGpsButton();  // Draw GPS button on splash screen
 
 static const uint32_t WELCOME_DURATION_MS = 10000;
-enum AppScreen { APP_WELCOME, APP_STATS };
+enum AppScreen { APP_WELCOME, APP_STATS, APP_GPS };
 static AppScreen appScreen = APP_WELCOME;
 static uint32_t appStartMs = 0;
 

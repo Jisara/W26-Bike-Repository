@@ -1,15 +1,33 @@
-#include <string.h>
+#include <cstring>
 #include "welcomepage.h"
 #include "welcomepageanim.h"
 #include "secretscreen.h"
-#include "ble_nav.h"
 #include "gps_render.h"
+#include "stats.h"
 
-// Phone → BLE nav string (updated only from loop(), never from the BLE callback).
-String g_mapsDirectionText = "Waiting for Maps notification...";
-volatile bool newMapsDataAvailable = false;
-static uint32_t lastNavUpdateMs = 0;
-static uint32_t lastGpsRefreshMs = 0;
+// Default nav payload for GPS dashboard until phone/BLE data is wired in.
+static String g_mapsDirectionText = "Waiting for Maps notification...";
+static uint32_t g_lastNavUpdateMs = 0;
+static uint32_t g_lastScreenTouchMs = 0;
+static uint32_t g_lastGpsDrawMs = 0;
+
+static bool didTouch(uint32_t nowMs) {
+  if (digitalRead(TOUCH_IRQ) == HIGH) {
+    return false;
+  }
+  if (nowMs - g_lastScreenTouchMs < TOUCH_DEBOUNCE_MS) {
+    return false;
+  }
+
+  uint16_t touchX = 0;
+  uint16_t touchY = 0;
+  if (!getTouchCoordinates(touchX, touchY)) {
+    return false;
+  }
+
+  g_lastScreenTouchMs = nowMs;
+  return true;
+}
 
 void setup() {
   Serial.begin(115200);
@@ -23,64 +41,50 @@ void setup() {
   drawSplash();
   Serial.println("Splash shown");
 
-  bleNavSetup();
-  Serial.println("Ready for nav dashboard");
+  Serial.println("Welcome running");
 }
 
 void loop() {
-  touchHandleSwitch();
+  uint32_t now = millis();
 
-  const bool connectionChanged = bleNavConnectionChanged();
-  if (connectionChanged) {
-    Serial.printf("BLE link state: %s\n", bleNavIsConnected() ? "CONNECTED" : "DISCONNECTED");
-  }
+  if (appScreen == APP_WELCOME) {
+    touchHandleSwitch();
 
-  if (bleNavHasUpdate()) {
-    const uint32_t rxSeq = bleNavGetRxSequence();
-    const char *incoming = bleNavGetText();
-    if (incoming && incoming[0] != '\0') {
-      g_mapsDirectionText = incoming;
-      lastNavUpdateMs = millis();
-      newMapsDataAvailable = true;
-      Serial.printf("NAV APPLY seq=%lu len=%u: %s\n",
-                    static_cast<unsigned long>(rxSeq),
-                    static_cast<unsigned>(g_mapsDirectionText.length()),
-                    g_mapsDirectionText.c_str());
+    if (now - appStartMs >= WELCOME_DURATION_MS) {
+      appScreen = APP_STATS;
+      statsInit();
+      Serial.println("-> Stats dashboard");
     }
-    bleNavClearUpdate();
+    return;
   }
 
-  static ScreenType lastScreen = SCREEN_SPLASH;
-  ScreenType currentScreen = getCurrentScreen();
-  const bool onGps = (currentScreen == SCREEN_GPS);
-  const uint32_t nowMs = millis();
-  const char *navCStr = g_mapsDirectionText.c_str();
-  const uint32_t gpsIntervalMs =
-      (onGps && gpsNavInstructionWantsMarquee(navCStr)) ? 120u : 1000u;
+  if (appScreen == APP_STATS) {
+    statsUpdateAndRender();
 
-  if (onGps && currentScreen != lastScreen) {
-    const uint32_t ageSec = (lastNavUpdateMs == 0) ? 0 : (nowMs - lastNavUpdateMs) / 1000;
-    drawGpsScreen(navCStr, ageSec, bleNavIsConnected(),
-                  bleNavGetRxSequence(),
-                  static_cast<uint32_t>(bleNavGetLastRxLength()));
-    lastGpsRefreshMs = nowMs;
-    newMapsDataAvailable = false;
-  } else if (onGps &&
-             (newMapsDataAvailable || connectionChanged || (nowMs - lastGpsRefreshMs >= gpsIntervalMs))) {
-    const uint32_t ageSec = (lastNavUpdateMs == 0) ? 0 : (nowMs - lastNavUpdateMs) / 1000;
-    drawGpsScreen(navCStr, ageSec, bleNavIsConnected(),
-                  bleNavGetRxSequence(),
-                  static_cast<uint32_t>(bleNavGetLastRxLength()));
-    lastGpsRefreshMs = nowMs;
-    newMapsDataAvailable = false;
+    if (didTouch(now)) {
+      appScreen = APP_GPS;
+      g_lastGpsDrawMs = 0;
+      Serial.println("-> GPS dashboard");
+    }
+    return;
   }
 
-  lastScreen = currentScreen;
-  
-  static uint32_t last = 0;
-  if (millis() - last >= 1000) {
-    last = millis();
-    Serial.printf("Uptime: %lu s\n", millis() / 1000);
-    bleNavDebugPrintLastRx();
+  if (appScreen == APP_GPS) {
+    if (g_lastGpsDrawMs == 0 || now - g_lastGpsDrawMs >= 200) {
+      const uint32_t ageSec = (g_lastNavUpdateMs == 0) ? 0 : (now - g_lastNavUpdateMs) / 1000;
+      drawGpsScreen(
+          g_mapsDirectionText.c_str(),
+          ageSec,
+          false,
+          0,
+          static_cast<uint32_t>(g_mapsDirectionText.length()));
+      g_lastGpsDrawMs = now;
+    }
+
+    if (didTouch(now)) {
+      appScreen = APP_STATS;
+      statsInit();
+      Serial.println("-> Stats dashboard");
+    }
   }
 }
