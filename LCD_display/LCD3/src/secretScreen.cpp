@@ -68,7 +68,9 @@ void touchHandleSwitch() {
   }
 
   if (!isTouched()) return;
+
   if (now - lastTouchTime < TOUCH_DEBOUNCE_MS) return;
+  
   lastTouchTime = now;
 
   // Get touch coordinates
