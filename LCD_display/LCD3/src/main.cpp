@@ -67,11 +67,24 @@ void setup() {
   drawSplash();
   Serial.println("Splash shown");
 
+  bleNavSetup();
+  Serial.println("BLE navigation ready");
+
   Serial.println("Welcome running");
 }
 
 void loop() {
   uint32_t now = millis();
+
+  if (bleNavHasUpdate()) {
+    const char *latest = bleNavGetText();
+    if (latest != nullptr && latest[0] != '\0') {
+      g_mapsDirectionText = latest;
+      g_lastNavUpdateMs = now;
+      Serial.printf("NAV update: %s\n", latest);
+    }
+    bleNavClearUpdate();
+  }
 
   if (appScreen == APP_WELCOME) {
     touchHandleSwitch();
@@ -101,7 +114,7 @@ void loop() {
       drawGpsScreen(
           g_mapsDirectionText.c_str(),
           ageSec,
-          false,
+          bleNavIsConnected(),
           0,
           static_cast<uint32_t>(g_mapsDirectionText.length()));
       g_lastGpsDrawMs = now;
